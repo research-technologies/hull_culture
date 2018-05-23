@@ -8,7 +8,7 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
       '
 
   def banner
-    say_status('info', 'Adding gems for KF', :blue)
+    say_status('info', 'Installing Hull Culture', :blue)
   end
 
   def run_generators

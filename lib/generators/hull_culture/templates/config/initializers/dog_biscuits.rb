@@ -7,10 +7,10 @@ Qa::Authorities::Local.register_subauthority('organisations', 'DogBiscuits::Term
 
 # Configuration
 DogBiscuits.config do |config|
-  config.selected_models = %w[DigitalArchivalObject]
+  config.selected_models = %w[DigitalArchivalObject Package]
 
-  # config.digital_archival_object_properties = %i[]
-  # config.digital_archival_object_required = %i[]
+  config.digital_archival_object_properties = %i[title access_provided_by part_of extent latitude longitude altitude]
+  config.digital_archival_object_properties_required = %i[title access_provided_by part_of]
   # config.package_properties = %i[]
   # config.package_properties_required = %i[]
   # config.facet_properties = %i[]
@@ -19,4 +19,10 @@ DogBiscuits.config do |config|
   # config.singular_properties = %i[]
   # config.facet_only_properties = %i[]
 
+  config.property_mappings[:part_of] = { 
+    index: "('part_of', :stored_searchable)", 
+    label: 'Accession', 
+    help_text: 'Accession that this work is part of.', 
+    schema_org: { property: 'isPartOf', type: 'http://schema.org/CreativeWork', value: 'name' } 
+  }
 end

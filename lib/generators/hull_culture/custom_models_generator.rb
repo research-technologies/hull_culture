@@ -18,7 +18,7 @@ This generator adds specific properties.
     # properties
     properties = [] # matches name of concern so camelized
 
-    models = %w[conference_item published_work] # matches file_name so underscore
+    models = %w[] # matches file_name so underscore
     models.each do |m|
       file_text = File.read("app/models/#{m}.rb")
       properties.each do |p|
