@@ -43,7 +43,7 @@ DogBiscuits.config do |config|
     aip_resource_uri
     dip_resource_uri
     origin_pipeline
-    packages_ids
+    package_ids
   ]
   config.package_properties_required = %i[title]
   
