@@ -47,16 +47,12 @@ DogBiscuits.config do |config|
   ]
   config.package_properties_required = %i[title]
   
-  # config.facet_properties = %i[]
-  # config.index_properties = %i[]
+  config.facet_properties += %i[access_provided_by packages_titles_tesim]
+  config.index_properties += %i[access_provided_by]
+
   # config.authorities_add_new = %i[]
   # config.singular_properties = %i[]
   # config.facet_only_properties = %i[]
 
-  config.property_mappings[:part_of] = {
-    index: "('part_of', :stored_searchable)",
-    label: 'Accession',
-    help_text: 'Accession that this work is part of.',
-    schema_org: { property: 'isPartOf', type: 'http://schema.org/CreativeWork', value: 'name' }
-  }
+  config.property_mappings[:part_of][:label] = 'Accession'
 end
