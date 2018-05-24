@@ -9,20 +9,54 @@ Qa::Authorities::Local.register_subauthority('organisations', 'DogBiscuits::Term
 DogBiscuits.config do |config|
   config.selected_models = %w[DigitalArchivalObject Package]
 
-  config.digital_archival_object_properties = %i[title access_provided_by part_of extent latitude longitude altitude]
-  config.digital_archival_object_properties_required = %i[title access_provided_by part_of]
-  # config.package_properties = %i[]
-  # config.package_properties_required = %i[]
+  config.digital_archival_object_properties = %i[
+    title 
+    identifier 
+    access_provided_by 
+    part_of 
+    extent 
+    lat 
+    long 
+    alt 
+    packaged_by_ids
+  ]
+  config.digital_archival_object_properties_required = %i[
+    title 
+    identifier 
+    access_provided_by 
+    part_of
+  ]
+  config.package_properties = %i[
+    title
+    aip_uuid
+    transfer_uuid
+    sip_uuid
+    dip_uuid
+    aip_status
+    dip_status
+    aip_size
+    dip_size
+    aip_current_path
+    dip_current_path
+    aip_current_location
+    dip_current_location
+    aip_resource_uri
+    dip_resource_uri
+    origin_pipeline
+    packages_ids
+  ]
+  config.package_properties_required = %i[title]
+  
   # config.facet_properties = %i[]
   # config.index_properties = %i[]
   # config.authorities_add_new = %i[]
   # config.singular_properties = %i[]
   # config.facet_only_properties = %i[]
 
-  config.property_mappings[:part_of] = { 
-    index: "('part_of', :stored_searchable)", 
-    label: 'Accession', 
-    help_text: 'Accession that this work is part of.', 
-    schema_org: { property: 'isPartOf', type: 'http://schema.org/CreativeWork', value: 'name' } 
+  config.property_mappings[:part_of] = {
+    index: "('part_of', :stored_searchable)",
+    label: 'Accession',
+    help_text: 'Accession that this work is part of.',
+    schema_org: { property: 'isPartOf', type: 'http://schema.org/CreativeWork', value: 'name' }
   }
 end
