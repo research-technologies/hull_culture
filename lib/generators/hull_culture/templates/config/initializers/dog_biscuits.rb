@@ -47,7 +47,7 @@ DogBiscuits.config do |config|
   ]
   config.package_properties_required = %i[title]
   
-  config.facet_properties += %i[access_provided_by packages_titles_tesim]
+  config.facet_properties += %i[access_provided_by package_titles]
   config.index_properties += %i[access_provided_by]
 
   # config.authorities_add_new = %i[]
