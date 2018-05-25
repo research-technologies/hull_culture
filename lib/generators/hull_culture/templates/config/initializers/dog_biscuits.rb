@@ -10,20 +10,20 @@ DogBiscuits.config do |config|
   config.selected_models = %w[DigitalArchivalObject Package]
 
   config.digital_archival_object_properties = %i[
-    title 
-    identifier 
-    access_provided_by 
-    part_of 
-    extent 
-    lat 
-    long 
-    alt 
+    title
+    identifier
+    access_provided_by
+    part_of
+    extent
+    lat
+    long
+    alt
     packaged_by_ids
   ]
   config.digital_archival_object_properties_required = %i[
-    title 
-    identifier 
-    access_provided_by 
+    title
+    identifier
+    access_provided_by
     part_of
   ]
   config.package_properties = %i[
@@ -46,7 +46,7 @@ DogBiscuits.config do |config|
     package_ids
   ]
   config.package_properties_required = %i[title]
-  
+
   config.facet_properties += %i[access_provided_by packaged_by_titles]
   config.index_properties += %i[access_provided_by packaged_by_titles]
 
