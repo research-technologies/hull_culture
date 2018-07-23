@@ -13,7 +13,7 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
 
   def install_sword
     # tmp, use fork and branch
-    gem 'willow_sword', git: 'https://github.com:anarchist-raccoons/willow_sword.git', branch: 'hull'
+    gem 'willow_sword', git: 'https://github.com/anarchist-raccoons/willow_sword.git', branch: 'hull'
   
     Bundler.with_clean_env do
       run "bundle install"
