@@ -11,6 +11,16 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
     say_status('info', 'Installing Hull Culture', :blue)
   end
 
+  def install_sword
+    # tmp, use fork and branch
+    gem 'willow_sword', git: 'https://github.com:anarchist-raccoons/willow_sword.git', branch: 'hull'
+  
+    Bundler.with_clean_env do
+      run "bundle install"
+    end
+    route("mount WillowSword::Engine => '/sword'")
+  end
+
   def run_generators
     # kingsf - must happen after hyku_leaf and dog_biscuits
     generate 'hull_culture:setup', "-f"
