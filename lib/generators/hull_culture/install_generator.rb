@@ -2,6 +2,8 @@
 
 class HullCulture::InstallGenerator < Rails::Generators::Base
   source_root File.expand_path('../templates', __FILE__)
+  
+  class_option :initial, type: :boolean, default: false
 
   desc '
   Install, generate and configure for KF.
@@ -33,5 +35,19 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
 
     # This comes after the work generators because it inserts into the locales
     generate 'hull_culture:locales_labels', "-f"
+  end
+  
+  # todo initial stuff etc
+   def rake_tasks
+    rake('assets:precompile')
+  end
+
+  def initial_rake_tasks
+    if options[:initial]
+      rails_command 'db:migrate'
+      rake('hyrax:default_admin_set:create')
+      rake('hyrax:workflow:load')
+      rake('hyrax:default_collection_types:create')
+    end
   end
 end
