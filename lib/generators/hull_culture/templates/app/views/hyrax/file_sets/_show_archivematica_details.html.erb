@@ -1,0 +1,31 @@
+<% if @presenter.mets_extracted? %>
+  <% archivematica_metadata = @presenter.archivematica_metadata %>
+  <h3>File Details (SIP)</h3>
+  <dl class="dl-horizontal file-show-term file-show-details">
+  <% @presenter.sip_keys.each do |term| %>
+    <div>
+      <dt>
+        <%= @presenter.label_for_term_archivematica(term) %>
+      </dt>
+      <dd>
+        <%= sanitize @presenter.archivematica_metadata[term].join("<br />") %>
+      </dd>
+    </div>
+  <% end %>
+  </dl>
+  <% unless @presenter.aip_keys.empty? %>
+    <h3>File Details (AIP)</h3>
+    <dl class="dl-horizontal file-show-term file-show-details">
+    <% @presenter.aip_keys.each do |term| %>
+      <div>
+        <dt>
+          <%= @presenter.label_for_term_archivematica(term) %>
+        </dt>
+        <dd>
+          <%= sanitize @presenter.archivematica_metadata[term].join("<br />") %>
+        </dd>
+      </div>
+    <% end %>
+    </dl>
+  <% end %>
+<% end %>

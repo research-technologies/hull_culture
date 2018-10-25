@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class HullCulture::CustomModelsGenerator < Rails::Generators::Base
-  source_root File.expand_path('../templates', __FILE__)
+  source_root File.expand_path('templates', __dir__)
 
   desc '
 This generator adds specific properties.
@@ -38,6 +38,4 @@ This generator adds specific properties.
       end
     end
   end
-
-
 end
