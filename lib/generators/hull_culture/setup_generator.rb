@@ -29,7 +29,6 @@ This generator adds Hull Culture Specific changes and configurations.
   
   def to_prepare
     actor = "      Hyrax::CurationConcern.actor_factory.insert_before Hyrax::Actors::CreateWithFilesActor, Hyrax::Actors::ExtractMetadataActor\n"
-    actor += "       Hyrax::CurationConcern.actor_factory.insert_before Hyrax::Actors::OptimisticLockValidator, Hyrax::Actors::ExtractMetsMetadataActor\n" 
     application = "config/application.rb"
     application_text = File.read("config/application.rb")
     inject_into_file application, after: 'config.to_prepare do' do
