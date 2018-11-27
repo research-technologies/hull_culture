@@ -22,6 +22,10 @@ This generator adds Hull Culture Specific changes and configurations.
   def create_configs
     directory 'config', 'config'
   end
+  
+  def create_public
+    directory 'public', 'lib'
+  end
 
   def create_specs
     directory 'spec', 'spec'

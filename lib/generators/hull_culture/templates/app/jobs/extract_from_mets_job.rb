@@ -3,6 +3,8 @@
 class ExtractFromMetsJob < Hyrax::ApplicationJob
   attr_accessor :skip_extracted
   
+  queue_as :scheduled
+  
   # @param skip_extracted = true [Boolean] skip extraction if done previously
   def perform(skip_extracted = true)
     @skip_extracted = skip_extracted
