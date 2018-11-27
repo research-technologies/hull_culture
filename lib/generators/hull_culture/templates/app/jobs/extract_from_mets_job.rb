@@ -12,7 +12,6 @@ class ExtractFromMetsJob < Hyrax::ApplicationJob
 
   private
 
-  
   def find_filesets_to_process
     ActiveFedora::SolrService.query('has_model_ssim:"FileSet"',
                                 fq: [

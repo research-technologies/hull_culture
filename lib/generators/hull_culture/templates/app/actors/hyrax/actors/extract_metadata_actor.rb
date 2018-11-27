@@ -53,11 +53,12 @@ module Hyrax
       def merge_attributes(env, new_attributes)
         keys = env.attributes.keys.map(&:to_sym)
         new_attributes.select { |p| supported?(p.to_sym) }.each do |k, v|
-          if keys.include?(k.to_sym)
-            next if env.attributes[k] == v
-            env = do_merge(env, k, v)
+          prop = mapping(k.to_sym)
+          if keys.include?(prop)
+            next if env.attributes[prop] == v
+            env = do_merge(env, prop, v)
           else
-            env.attributes[k] = v
+            env.attributes[prop] = v
           end
         end
         env
@@ -102,6 +103,18 @@ module Hyrax
         Rails.logger.error(e)
       end
       
+      # map any incoming keys to properties
+      def mapping(value)
+        case value
+        when :accession_number
+          :identifier
+        when :ref_no
+          :part_of
+        else
+          value
+        end
+      end
+      
       def get_package_id(parsed_json)
         package = Package.search_with_conditions({ title: parsed_json[:packaged_by_package_name]}, rows: 1)[:id]
         parsed_json[:packaged_by_ids] = [package.id] unless package.nil?
@@ -112,7 +125,7 @@ module Hyrax
       # @return [Array] file_path
       def supported?(property)
         return false if property == :id
-        if DogBiscuits.config.send("#{model.underscore}_properties").include?(property)
+        if DogBiscuits.config.send("#{model.underscore}_properties").include?(mapping(property))
           true
         else
           Rails.logger.warn("Property #{property} is not supported on #{model}")

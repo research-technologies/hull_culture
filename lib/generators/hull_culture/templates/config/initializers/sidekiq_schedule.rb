@@ -1,8 +1,10 @@
+# Schedule the nightly ExtractFromMetsJob if it isn't already scheduled
+
 if Rails.application.config.active_job.queue_adapter == :sidekiq
+  require 'sidekiq/api'
   Sidekiq.configure_client do |_config|
     Rails.application.config.after_initialize do
-      # @todo don't start multiples
       ExtractFromMetsJob.set(wait_until: Date.tomorrow.midnight).perform_later
-    end
+    end if Sidekiq::Queue.new('scheduled').size == 0
   end
 end
