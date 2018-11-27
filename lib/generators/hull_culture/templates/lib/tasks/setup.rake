@@ -39,6 +39,7 @@ namespace :hull_culture do
     announcement_value = "<p>Admins can change this announcement text in the dashboard.</p>"
     block = ContentBlock.find_by(name: 'announcement_text')
     block = ContentBlock.new(name: ContentBlock::NAME_REGISTRY[:announcement], value: announcement_value) if block.nil?
+    block.value = announcement_value if block.value.nil?
     block.save
   end
 
