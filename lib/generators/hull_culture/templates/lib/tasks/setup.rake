@@ -36,7 +36,7 @@ namespace :hull_culture do
   
   desc 'Set announcement text'
   task announcement: :environment do
-    announcement_value = "<p></p>"
+    announcement_value = "<p>Admins can change this announcement text in the dashboard.</p>"
     block = ContentBlock.find_by(name: 'announcement_text')
     block = ContentBlock.new(name: ContentBlock::NAME_REGISTRY[:announcement], value: announcement_value) if block.nil?
     block.save

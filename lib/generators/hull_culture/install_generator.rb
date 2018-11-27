@@ -121,6 +121,8 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
       rake('hyrax:default_admin_set:create')
       rake('hyrax:workflow:load')
       rake('hyrax:default_collection_types:create')
+      rake('hull_culture:colors')
+      rake('hull_culture:announcement')
     end
   end
 end
