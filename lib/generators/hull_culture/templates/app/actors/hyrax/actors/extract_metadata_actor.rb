@@ -53,11 +53,12 @@ module Hyrax
       def merge_attributes(env, new_attributes)
         keys = env.attributes.keys.map(&:to_sym)
         new_attributes.select { |p| supported?(p.to_sym) }.each do |k, v|
-          if keys.include?(k.to_sym)
-            next if env.attributes[k] == v
-            env = do_merge(env, k, v)
+          prop = mapping(k.to_sym)
+          if keys.include?(prop)
+            next if env.attributes[prop] == v
+            env = do_merge(env, prop, v)
           else
-            env.attributes[k] = v
+            env.attributes[prop] = v
           end
         end
         env
@@ -82,7 +83,7 @@ module Hyrax
         end
         env
       end
-      
+
       # @param [String] file_id
       # @return [Array] file_path
       def file_path(file_id)
@@ -92,19 +93,42 @@ module Hyrax
       # @param [String] file_id
       # @return [Hash] hash extracted from json file
       def parse(file_id)
-        JSON.parse(File.read(file_path(file_id)))
+        parsed_json = JSON.parse(File.read(file_path(file_id)))
+        if parsed_json[:packaged_by_package_name]
+          get_package_id(parsed_json)
+        else
+          parsed_json
+        end
       rescue JSON::ParserError => e
         Rails.logger.error(e)
+      end
+      
+      # map any incoming keys to properties
+      def mapping(value)
+        case value
+        when :accession_number
+          :identifier
+        when :ref_no
+          :part_of
+        else
+          value
+        end
+      end
+      
+      def get_package_id(parsed_json)
+        package = Package.search_with_conditions({ title: parsed_json[:packaged_by_package_name]}, rows: 1)[:id]
+        parsed_json[:packaged_by_ids] = [package.id] unless package.nil?
+        parsed_json
       end
 
       # @param [String] file_id
       # @return [Array] file_path
       def supported?(property)
         return false if property == :id
-        if DogBiscuits.config.send("#{model.underscore}_properties").include?(property)
+        if DogBiscuits.config.send("#{model.underscore}_properties").include?(mapping(property))
           true
         else
-          Rails.logger.warn("Property #{property.to_s} is not supported on #{model}")
+          Rails.logger.warn("Property #{property} is not supported on #{model}")
           false
         end
       end

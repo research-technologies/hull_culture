@@ -1,0 +1,19 @@
+<h3>Characterization Information</h3>
+<% if @presenter.characterized? %>
+  <dl class="dl-horizontal file-show-term file-show-details">
+    <% @presenter.characterization_metadata.keys.each do |term| %>
+      <dt>
+        <%= @presenter.label_for_term(term)%>
+      </dt>
+      <dd>
+        <% additional_values = @presenter.secondary_characterization_values(term) %>
+        <%= sanitize @presenter.primary_characterization_values(term).join("<br />") %>
+        <% unless additional_values.empty? %>
+          <%= render partial: "extra_fields_modal", locals: { name: term, values: additional_values } %>
+        <% end %>
+      </dd>
+    <% end %>
+  </dl>
+<% else %>
+  <p>not yet characterized</p>
+<% end %>
