@@ -11,16 +11,16 @@ This generator adds Hull Culture Specific changes and configurations.
     say_status('info', 'Configuring for Hull Culture', :blue)
   end
 
+  def create_configs
+    directory 'config', 'config'
+  end
+  
   def create_app
     directory 'app', 'app'
   end
 
   def create_lib
     directory 'lib', 'lib'
-  end
-
-  def create_configs
-    directory 'config', 'config'
   end
   
   def create_public

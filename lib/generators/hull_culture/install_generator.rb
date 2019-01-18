@@ -110,7 +110,6 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
     end unless File.read('app/models/solr_document.rb').include?('ArchivematicaExtendedSolrDocument')
   end
 
-  # TODO: initial stuff etc
   def rake_tasks
     rake('assets:precompile')
   end
