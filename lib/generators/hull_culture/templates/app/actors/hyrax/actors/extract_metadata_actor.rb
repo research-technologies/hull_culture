@@ -109,7 +109,7 @@ module Hyrax
         case value
         when :accession_number
           :identifier
-        when :ref_no
+        when :reference
           :part_of
         else
           value
