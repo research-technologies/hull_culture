@@ -39,7 +39,6 @@ class FileSetIndexerExtended < Hyrax::FileSetIndexer
       solr_doc['valid_tesim'] = object.characterization_proxy.valid
       solr_doc['well_formed_tesim'] = object.characterization_proxy.well_formed
       solr_doc['word_count_tesim'] = object.characterization_proxy.word_count
-      solr_doc['word_count_is'] = Integer(object.characterization_proxy.word_count) if object.characterization_proxy.word_count.present?
       solr_doc['format_label_sim'] = object.characterization_proxy.format_label
       solr_doc['mime_type_sim'] = object.mime_type
 
@@ -111,7 +110,6 @@ class FileSetIndexerExtended < Hyrax::FileSetIndexer
         solr_doc['sip_valid_tesim'] = object.sip_proxy.valid
         solr_doc['sip_well_formed_tesim'] = object.sip_proxy.well_formed
         solr_doc['sip_word_count_tesim'] = object.sip_proxy.word_count
-        solr_doc['sip_word_count_is'] = Integer(object.sip_proxy.word_count) if object.sip_proxy.word_count.present?
         solr_doc['sip_format_label_sim'] = object.sip_proxy.format_label
         solr_doc['sip_format_registry_key_sim'] = object.sip_proxy.format_registry_key
       end

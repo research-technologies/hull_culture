@@ -5,13 +5,13 @@ module Hyrax
     # If there is a file called metadata.json, extract the metadata
     #   and merge into attributes
     class ExtractMetadataActor < Hyrax::Actors::AbstractActor
-      attr_accessor :uploaded_files, :model
+      attr_accessor :uploaded_file_paths, :model
 
       # @param [Hyrax::Actors::Environment] env
       # @return [Boolean] true if create was successful
       def create(env)
         @model = env.curation_concern.class.to_s
-        @uploaded_files = filter_file_ids(env.attributes[:uploaded_files])
+        @uploaded_file_paths = filter_file_ids(env.attributes[:uploaded_files])
         env = extract_and_merge(env)
         next_actor.create(env) && true
       end
@@ -20,7 +20,7 @@ module Hyrax
       # @return [Boolean] true if update was successful
       def update(env)
         @model = env.curation_concern.class.to_s.underscore
-        @uploaded_files = filter_file_ids(env.attributes[:uploaded_files])
+        @uploaded_file_paths = filter_file_ids(env.attributes[:uploaded_files])
         env = extract_and_merge(env)
         next_actor.update(env) && true
       end
@@ -30,16 +30,16 @@ module Hyrax
       # @param [Array] input
       # @return [Array] uploaded_file_ids for files called 'metadata.json'
       def filter_file_ids(input)
-        Array.wrap(input).select(&:present?).select do |f|
-          file_path(f).split('/').last.casecmp('metadata.json').zero?
+        Array.wrap(input).select(&:present?).map do |f|
+          file_path(f) if file_path(f).end_with?('metadata.json')
         end
       end
 
       # @param [Hyrax::Actors::Environment] env
       # @return [Hyrax::Actors::Environment] env
       def extract_and_merge(env)
-        uploaded_files.each_with_index do |file_id, _index|
-          new_attributes = parse(file_id)
+        uploaded_file_paths.each do |file|
+          new_attributes = parse(file)
           Rails.logger.info('NEW ATTRIBUTES: ')
           Rails.logger.info(new_attributes)
           next if new_attributes.blank?
@@ -92,15 +92,16 @@ module Hyrax
 
       # @param [String] file_id
       # @return [Hash] hash extracted from json file
-      def parse(file_id)
-        parsed_json = JSON.parse(File.read(file_path(file_id)))
-        if parsed_json[:packaged_by_package_name]
+      def parse(file)
+        parsed_json = JSON.parse(File.read(file))
+        if parsed_json['packaged_by_package_name']
           get_package_id(parsed_json)
         else
           parsed_json
         end
       rescue JSON::ParserError => e
         Rails.logger.error(e)
+        nil
       end
       
       # map any incoming keys to properties
@@ -116,8 +117,8 @@ module Hyrax
       end
       
       def get_package_id(parsed_json)
-        package = Package.search_with_conditions({ title: parsed_json[:packaged_by_package_name]}, rows: 1)[:id]
-        parsed_json[:packaged_by_ids] = [package.id] unless package.nil?
+        package = Package.search_with_conditions({ title: parsed_json['packaged_by_package_name']}, rows: 1).first[:id]
+        parsed_json['packaged_by_ids'] = [package] unless package.nil?
         parsed_json
       end
 

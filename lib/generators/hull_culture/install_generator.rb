@@ -106,7 +106,7 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
   
   def solr_document
     inject_into_file 'app/models/solr_document.rb', after: "DogBiscuits::ExtendedSolrDocument\n" do 
-      "ArchivematicaExtendedSolrDocument\n" 
+      "  include ArchivematicaExtendedSolrDocument\n" 
     end unless File.read('app/models/solr_document.rb').include?('ArchivematicaExtendedSolrDocument')
   end
 
