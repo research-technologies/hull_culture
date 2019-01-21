@@ -62,7 +62,7 @@ class MetsExtractor
       if fset.blank?
         Rails.logger.warn(
           "Couldn't find fileset with label #{file_set_id(file_node)}"
-        ) unless excluded_label?(file_node)
+        ) unless excluded_label?(file_set_id(file_node))
       else
         add_or_update_file(fset, 'original', file_node)
         fset.reload
