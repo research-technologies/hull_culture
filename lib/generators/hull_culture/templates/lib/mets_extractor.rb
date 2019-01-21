@@ -62,7 +62,7 @@ class MetsExtractor
       if fset.blank?
         Rails.logger.warn(
           "Couldn't find fileset with label #{file_set_id(file_node)}"
-        ) unless file_set_id(file_node).end_with? '-metadata.json'
+        ) unless excluded_label?(file_node)
       else
         add_or_update_file(fset, 'original', file_node)
         fset.reload
@@ -71,10 +71,12 @@ class MetsExtractor
         # Process aip files, assume there is a max of one per sip file
         related_files(file_node).each do |rel|
           node = aips.select { |n| uuid(n) == rel }.first
-          add_or_update_file(fset, 'preservation', node)
-          fset.reload
-          fset.mets_extracted = true
-          fset.save
+          unless node.blank?
+            add_or_update_file(fset, 'preservation', node)
+            fset.reload
+            fset.mets_extracted = true
+            fset.save
+          end
         end
         Rails.logger.info(
           "Updated FileSet #{fset.id}: #{file_set_id(file_node)}"
@@ -248,18 +250,21 @@ class MetsExtractor
   # Labels should be unique, so return only one
   # @param label [String] fileset label
   # @return [FileSet] filesets with matching label
-  
-  # this has to be more than just the label?
-  
+  # @todo remove Package file_sets in a cleaner way than pattern matching
   def find_referenced_fileset_by_label(label)
-    return nil if label.end_with? '-metadata.json'
+    return nil if excluded_label?(label)
     
-    FileSet.search_with_conditions({ label: label }, 
-      rows: 1, 
-      fq: "{!join from=file_set_ids_ssim to=id}packaged_by_ids_ssim:" + file_set.id).collect do |fset|
-      
-      FileSet.find(fset.id)
-    end.first
+    fset = FileSet.search_with_conditions({ label: label_formatted(label) }, 
+      rows: 1,
+      fl: 'id',
+      fq: "{!join from=file_set_ids_ssim to=id}packagedBy_ssim:" + file_set.parent.id)
+    FileSet.find(fset.first.id) unless fset.blank?
+  end
+  
+  def label_formatted(label)
+    label.gsub!(' ', '_')
+    label_parts = label.split('.')
+    "#{label_parts.first}.#{label_parts.last.downcase}"
   end
 
   # @param node [Nokogiri::XML::Node]
@@ -316,14 +321,20 @@ class MetsExtractor
   # Number of file_sets created from this AIP, includes:
   #   filesets from the package minus two
   #   (METS and processingMCP.xml are not included)
-  #   filesets attached to works
+  #   filesets attached to works (DAOs)
   # @return [Integer] number
   def actual_num_filesets
     num = file_set.parent.file_sets.count - 2
-    file_set.parent.packages.collect { |dao| dao.file_sets.count }.each do |n|
-      num += n
-    end
+    DigitalArchivalObject.search_with_conditions(
+      { packagedBy_ssim: file_set.parent.id }, 
+      fl: 'file_set_ids_ssim',
+      rows: 1000
+      ).each { | n | num += n["file_set_ids_ssim"].length}
     num
+  end
+  
+  def excluded_label?(label)
+    label == 'metadata.json' || label.downcase.end_with?('-files.csv') || label.downcase.end_with?('-description.csv') || label.start_with?('METS.') || label == 'processingMCP.xml'
   end
   
   def string_to_nil(string)
