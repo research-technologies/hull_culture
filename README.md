@@ -19,8 +19,6 @@ cd PATH_TO_HYRAX/vendor
 git clone https://github.com/research-technologies/hull_culture.git
 ```
 
-If using the github url, skip this step
-
 3. Add the gem to the Gemfile, install
 ```
 # add to Gemfile
@@ -30,16 +28,16 @@ gem 'hull_culture', path: 'vendor/hull_culture'
 bundle install
 ```
 
-Alternatively use the github url with `gem 'hull_culture', git: 'https://github.com/research-technologies/hull_culture'`
+Alternatively use the github url with `gem 'hull_culture', git: 'https://github.com/research-technologies/hull_culture'` (and skip step 2 above)
 
-4. Run the install generator (add  --initial on the first build)
-
-```
-rails g hull_culture:install --initial
-```
-
-5. Setup the ENV variables for production
+4. Setup the ENV variables for production
 
 With .rbenv-vars, copy this [production example file](https://github.com/research-technologies/hyrax_leaf/blob/master/.rbenv-vars-production-example) to the application root, rename to `.rbenv-vars` and set the values
 
 By another mechanism, set the vars listed in this [production example file](https://github.com/research-technologies/hyrax_leaf/blob/master/.rbenv-vars-production-example) 
+
+5. Run the install generator (add  --initial on the first build ONLY)
+
+```
+rails g hull_culture:install --initial
+```
