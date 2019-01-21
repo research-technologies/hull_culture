@@ -334,7 +334,7 @@ class MetsExtractor
   end
   
   def excluded_label?(label)
-    label == 'metadata.json' || label.downcase.end_with?('-files.csv') || label.downcase.end_with?('-description.csv') || label.start_with?('METS.') || label == 'processingMCP.xml'
+    label.end_with?('-metadata.json') || label.downcase.end_with?('-files.csv') || label.downcase.end_with?('-description.csv') || label.start_with?('METS.') || label == 'processingMCP.xml'
   end
   
   def string_to_nil(string)
