@@ -40,9 +40,9 @@ module Hyrax
       def extract_and_merge(env)
         uploaded_file_paths.each do |file|
           new_attributes = parse(file)
+          next if new_attributes.blank?
           Rails.logger.info('NEW ATTRIBUTES: ')
           Rails.logger.info(new_attributes)
-          next if new_attributes.blank?
           env = merge_attributes(env, new_attributes)
         end
         env
@@ -93,6 +93,7 @@ module Hyrax
       # @param [String] file_id
       # @return [Hash] hash extracted from json file
       def parse(file)
+        return nil if file.blank?
         parsed_json = JSON.parse(File.read(file))
         if parsed_json['packaged_by_package_name']
           get_package_id(parsed_json)

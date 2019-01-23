@@ -18,10 +18,10 @@ class ExtractFromMetsJob < Hyrax::ApplicationJob
     ActiveFedora::SolrService.query('has_model_ssim:"FileSet"',
                                 fq: [
                                   '!mets_extracted_tesim:"true"', 
-                                  'label_tesim:"METS-*"'
+                                  'label_tesim:METS'
                                   ],
                                 fl: ActiveFedora.id_field,
-                                rows: 25).map { |x| x.fetch(ActiveFedora.id_field) }
+                                rows: 50).map { |x| x.fetch(ActiveFedora.id_field) }
   end
 
   def process_mets

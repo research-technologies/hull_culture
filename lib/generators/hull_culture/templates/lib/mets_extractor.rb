@@ -99,7 +99,7 @@ class MetsExtractor
     file_nodes = file_ids.collect do |file|
       mets_xml.css("objectIdentifierValue[text()*='#{file}']")
     end.reject(&:blank?).flatten!
-    file_nodes.collect! { |fn| fn.parent.parent }
+    file_nodes.collect! { |fn| fn.parent.parent } unless file_nodes.blank?
   end
 
   # @param uuid [String] UUID from METS
