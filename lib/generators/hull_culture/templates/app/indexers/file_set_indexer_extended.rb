@@ -2,6 +2,9 @@
 class FileSetIndexerExtended < Hyrax::FileSetIndexer
   def generate_solr_document
     super.tap do |solr_doc|
+      # index the extracted_text as ssi
+      solr_doc['all_text_ssim'] = object.extracted_text.content if object.extracted_text.present?
+      
       # some of these will be numbers
       solr_doc['bit_depth_tesim'] = object.characterization_proxy.bit_depth
       solr_doc['byte_order_tesim'] = object.characterization_proxy.byte_order

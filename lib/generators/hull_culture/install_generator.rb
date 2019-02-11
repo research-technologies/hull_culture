@@ -31,7 +31,7 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
     generate ' dog_biscuits:generate_all', '-f'
 
     # This comes after the work generators because it inserts into the model
-    generate 'hull_culture:custom_models', '-f'
+    generate 'hull_culture:customisations', '-f'
 
     # This comes after the work generators because it inserts into the locales
     generate 'hull_culture:locales_labels', '-f'
