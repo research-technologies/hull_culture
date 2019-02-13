@@ -2,8 +2,8 @@
 class FileSetIndexerExtended < Hyrax::FileSetIndexer
   def generate_solr_document
     super.tap do |solr_doc|
-      # index the extracted_text as ssi
-      solr_doc['all_text_ssim'] = object.extracted_text.content if object.extracted_text.present?
+      # index the extracted_text as ts (scrub crap from it)
+      solr_doc['all_text_ts'] = object.extracted_text.content.force_encoding('UTF-8').gsub(/[!^\s[:cntrl:]]/i, ' ').gsub('  ', ' ').strip if object.extracted_text.present?
       
       # some of these will be numbers
       solr_doc['bit_depth_tesim'] = object.characterization_proxy.bit_depth

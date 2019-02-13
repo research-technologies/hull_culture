@@ -5,7 +5,7 @@ module Hyrax
     
     included do 
       # allow requests through, we'll authenticate and check the values
-      protect_from_forgery except: :change_visibility
+      protect_from_forgery except: :update_visibility
     end
     
     class_methods do
@@ -26,6 +26,7 @@ module Hyrax
     end
 
     # GET return the visibility
+    # @todo this bypasses auth, is that OK?
     def visibility
       @curation_concern = _curation_concern_type.find(params[:id]) unless curation_concern
       json = { curation_concern.id => { visibility: curation_concern.visibility, members: [] } }
@@ -89,6 +90,8 @@ module Hyrax
         change_concern_visibility
         return { status: 'changed', message: "#{curation_concern.id} was changed to #{curation_concern.visibility}. #{members}" }, :ok
       end
+      rescue StandardError => e
+        return { status: 'error', message: e.message }, :internal_server_error
     end
     
     def check_restrictions
@@ -97,9 +100,9 @@ module Hyrax
     
     def members
       if params['cascade']== 'true'
-        "Members were updated."
+        "FileSets were updated."
       else
-        "Members were not updated."
+        "FileSets were not updated."
       end
     end
     
@@ -107,15 +110,14 @@ module Hyrax
       curation_concern.visibility = params['visibility']
       change_member_visibility if params['cascade'] == 'true'
       saved = curation_concern.save
-      raise StandardError(curation_concerns.errors.messages) if saved == false
-      rescue StandardError => e
-        return { status: 'error', message: e.message }, :internal_server_error
+      raise StandardError(curation_concern.errors.messages) if saved == false
     end
     
     def change_member_visibility
       curation_concern.file_sets.each do | fs |
         fs.visibility = params['visibility'] unless fs.visibility == params['visibility']
-        fs.save
+        saved = fs.save
+        raise StandardError(fs.errors.messages) if saved == false
       end
     end
     
