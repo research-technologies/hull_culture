@@ -58,7 +58,7 @@ module Hyrax
             next if env.attributes[prop] == v
             env = do_merge(env, prop, v)
           else
-            env.attributes[prop] = v
+            env.attributes[prop] = Array.wrap(v)
           end
         end
         env
