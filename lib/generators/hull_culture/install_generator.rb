@@ -4,6 +4,8 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
   source_root File.expand_path('templates', __dir__)
 
   class_option :initial, type: :boolean, default: false
+  class_option :noprecompile, type: :boolean, default: false
+  class_option :nogenerate, type: :boolean, default: false
 
   desc '
   Install, generate and configure for KF.
@@ -11,6 +13,7 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
 
   def banner
     say_status('info', 'Installing Hull Culture', :blue)
+    exit 0 if options[:nogenerate]
   end
 
   def install_sword
@@ -111,7 +114,7 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
   end
 
   def rake_tasks
-    rake('assets:precompile')
+    rake('assets:precompile') unless options[:noprecompile]
   end
 
   def initial_rake_tasks
