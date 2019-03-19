@@ -3,7 +3,6 @@
 class HullCulture::InstallGenerator < Rails::Generators::Base
   source_root File.expand_path('templates', __dir__)
 
-  class_option :initial, type: :boolean, default: false
   class_option :noprecompile, type: :boolean, default: false
   class_option :nogenerate, type: :boolean, default: false
 
@@ -115,16 +114,5 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
 
   def rake_tasks
     rake('assets:precompile') unless options[:noprecompile]
-  end
-
-  def initial_rake_tasks
-    if options[:initial]
-      rails_command 'db:migrate'
-      rake('hyrax:default_admin_set:create')
-      rake('hyrax:workflow:load')
-      rake('hyrax:default_collection_types:create')
-      rake('hull_culture:colors')
-      rake('hull_culture:announcement')
-    end
   end
 end
