@@ -6,4 +6,4 @@
 production:
   :concurrency: 1
   :verbose: false
-  :pidfile: <%= File.join(ENV.fetch('PIDS_PATH', 'tmp'), 'pids','sidekiq.pid') %>
+  :pidfile: <%= File.join(ENV.fetch('PIDS_PATH', 'tmp'), 'sidekiq.pid') %>
