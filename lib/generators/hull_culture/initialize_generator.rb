@@ -13,6 +13,9 @@ This generator adds runs Hull Culture initialization tasks.
 
   def initial_rake_tasks
     rails_command 'db:migrate'
+    rails_command 'db:setup'
+    # install browser everything 
+    generate 'browse_everything:install', '-f'
     rake('hyrax:default_admin_set:create')
     rake('hyrax:workflow:load')
     rake('hyrax:default_collection_types:create')
