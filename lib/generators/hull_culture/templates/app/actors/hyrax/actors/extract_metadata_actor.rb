@@ -76,7 +76,10 @@ module Hyrax
           env.attributes[key].merge(value)
         else
           if env.attributes[key].blank?
-            env.attributes[key] = Array.wrap(value)
+            # Add to_s to value to stop solr storing values 
+            # as ints and then refusing other types at a 
+            # later date (e.g. long)
+            env.attributes[key] = Array.wrap(value.to_s)
           else
             env.attributes[key].concat(Array.wrap(value))
           end
