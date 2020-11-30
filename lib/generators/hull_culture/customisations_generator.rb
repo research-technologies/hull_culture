@@ -63,7 +63,8 @@ This generator adds specific properties.
     end
   end
       )
-    return if File.read('config/routes.rb').include?(vis_routes)
+
+   # return if File.read('config/routes.rb').include?(vis_routes)
     inject_into_file 'config/routes.rb', before: "\n  mount Riiif::Engine" do
       vis_routes
     end

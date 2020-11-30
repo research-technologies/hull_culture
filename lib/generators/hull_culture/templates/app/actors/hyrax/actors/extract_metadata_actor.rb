@@ -41,8 +41,6 @@ module Hyrax
         uploaded_file_paths.each do |file|
           new_attributes = parse(file)
           next if new_attributes.blank?
-          Rails.logger.info('NEW ATTRIBUTES: ')
-          Rails.logger.info(new_attributes)
           env = merge_attributes(env, new_attributes)
         end
         env
@@ -58,7 +56,11 @@ module Hyrax
             next if env.attributes[prop] == v
             env = do_merge(env, prop, v)
           else
-            env.attributes[prop] = Array.wrap(v)
+            if v.instance_of? Integer
+              env.attributes[prop] = Array.wrap(v.to_s)
+            else
+              env.attributes[prop] = Array.wrap(v)
+            end
           end
         end
         env
@@ -72,6 +74,7 @@ module Hyrax
       # @param [String] value
       # @return [Hyrax::Actors::Environment] env
       def do_merge(env, key, value)
+
         if value.is_a?(Hash)
           env.attributes[key].merge(value)
         else
@@ -79,7 +82,7 @@ module Hyrax
             # Add to_s to value to stop solr storing values 
             # as ints and then refusing other types at a 
             # later date (e.g. long)
-            env.attributes[key] = Array.wrap(value.to_s)
+            env.attributes[key] = Array.wrap(value)
           else
             env.attributes[key].concat(Array.wrap(value))
           end
