@@ -15,7 +15,7 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
     exit 0 if options[:nogenerate]
   end
 
-#  def install_sword
+  def install_sword
     # tmp, use fork and branch
     #gem 'willow_sword', git: 'https://github.com/CottageLabs/willow_sword.git'
     #gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
@@ -23,8 +23,8 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
     #Bundler.with_clean_env do
     #  run 'bundle install'
     #end
-    #route("mount WillowSword::Engine => '/sword'")
-#  end
+    route("mount WillowSword::Engine => '/sword'")
+  end
 
   def run_generators
     # hull_culture setup - must happen after hyku_leaf and dog_biscuits
