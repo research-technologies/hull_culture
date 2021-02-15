@@ -1,0 +1,9 @@
+{
+  "modules": {
+    "contentLeftPanel": {
+      "options": {
+        "panelOpen": false
+      }
+    }
+  }
+}
