@@ -57,7 +57,7 @@ module Hyrax
       pdfs = presenter.file_set_presenters.select(&:pdf?)
       if pdfs.present?
         manifest['@context'] = [manifest['@context'], 'https://wellcomelibrary.org/ld/ixif/0/context.json']
-        manifest['mediaSequences'] = [media_sequences(presenter.id, pdfs, manifest['sequences'])]
+        manifest['mediaSequences'] = [media_sequences(presenter, pdfs, manifest['sequences'])]
         manifest['sequences'] ||= []
         manifest['sequences'] += [add_placeholder_sequence]
       end
@@ -65,13 +65,13 @@ module Hyrax
     end
 
     # Override Hyrax 2.5.1 - additional method
-    def media_sequences(id, pdfs, sequences)
+    def media_sequences(work, pdfs, sequences)
       elements = pdfs.map do |p|
         media_sequence(
           pdf_url(p.id),
           pdf_url(p.id, true),
           p.title.first.to_s,
-          pdf_metadata(p),
+          pdf_metadata(p,work),
           "application/pdf",
           "foaf:Document"
         )
@@ -91,9 +91,9 @@ module Hyrax
       end
 
       {
-        "@id": "#{request.base_url}/iiif/#{id}/xsequence/s0",
+        "@id": "#{request.base_url}/iiif/#{work.id}/xsequence/s0",
         "@type": "ixif:MediaSequence",
-        "label": "XSequence #{id}",
+        "label": "XSequence #{work.id}",
         "elements": elements
       }
     end
@@ -160,7 +160,7 @@ module Hyrax
     end
 
     # Override Hyrax 2.5.1 - additional method
-    def pdf_metadata(pdf)
+    def pdf_metadata(pdf,parent_work)
       [
         "label": "pages",
         "value": pdf.page_count.blank? ? '' : pdf.page_count.first.to_s
