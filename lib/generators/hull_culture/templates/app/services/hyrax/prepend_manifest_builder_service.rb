@@ -129,10 +129,6 @@ module Hyrax
         "value": pdf.page_count.blank? ? '' : pdf.page_count.first.to_s
        },
        {
-        "label": "biblionumber",
-        "value": @presenter.biblionumber.first.to_s
-       },
-       {
         "label": "title",
         "value": @presenter.title.first.to_s
        } 
