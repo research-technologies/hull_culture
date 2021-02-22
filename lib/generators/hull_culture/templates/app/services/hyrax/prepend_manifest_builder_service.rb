@@ -23,25 +23,34 @@ module Hyrax
     # https://iiif.io/api/presentation/3.0/#32-technical-properties
     #
     def add_media_sequences_for_pdf(manifest)
-      pdfs = @presenter.file_set_presenters.select(&:pdf?)
-      if pdfs.present?
+      files = @presenter.file_set_presenters.select{ |f| f.pdf? || f.audio? || f.video? }
+      if files.present?
         manifest['@context'] = [manifest['@context'], 'https://wellcomelibrary.org/ld/ixif/0/context.json']
-        manifest['mediaSequences'] = [media_sequences(pdfs, manifest['sequences'])]
+        manifest['mediaSequences'] = [media_sequences(files, manifest['sequences'])]
         manifest['sequences'] ||= []
         manifest['sequences'] += [add_placeholder_sequence]
       end
       manifest
     end
 
-    def media_sequences(pdfs, sequences)
-      elements = pdfs.map do |p|
+    def media_type(file)
+       mt = "unknown:Thing"
+       mt = "dctypes:Sound" if file.audio?
+       mt = "foaf:Document" if file.pdf?
+       mt = "dctypes:MovingImage" if file.video?
+       mt
+    end
+
+    def media_sequences(files, sequences)
+      elements = files.map do |f|
         media_sequence(
-          pdf_url(p.id, false),
-          pdf_url(p.id, true),
-          p.title.first.to_s,
-          pdf_metadata(p),
-          "application/pdf",
-          "foaf:Document"
+          file_url(f.id, false),
+          file_url(f.id, true),
+          f.title.first.to_s,
+          file_metadata(f),
+          f.mime_type,
+          media_type(f),
+          file_rendering(f)
         )
       end
       # add sequences
@@ -65,14 +74,22 @@ module Hyrax
       }
     end
 
-    def media_sequence(url, thumbnail, label, metadata, format, type)
+    def media_sequence(url, thumbnail, label, metadata, format, type, rendering)
       {
         "@id": url,
         "@type": type,
         "format": format,
         "label": label,
         "metadata": metadata,
-        "thumbnail": thumbnail
+        "thumbnail": thumbnail,
+        "rendering": rendering
+      }
+    end
+    
+    def file_rendering(file)
+      {
+        "@id": file_url(file.id),
+        "format": file.mime_type
       }
     end
 
@@ -87,7 +104,7 @@ module Hyrax
             "@id": hyrax_url("/iiif/ixif-message/canvas/c1"),
             "@type": "sc:Canvas",
             "label": "Placeholder image",
-            # @todo changethis
+            # @TODO changethis
             "thumbnail": hyrax_url("/placeholder.jpg"),
             "height": 600,
             "width": 600,
@@ -110,8 +127,9 @@ module Hyrax
       }
     end
 
-    def pdf_url(id, thumb = false)
+    def file_url(id, thumb = false)
       if thumb
+        # TODO make this resolve to a duitable icon if no thumbnail available
         hyrax_url("/downloads/#{id}?file=thumbnail")
       else
         hyrax_url("/manifest_file/#{id}")
@@ -122,17 +140,30 @@ module Hyrax
       url.split('/full/full').join('/full/90,')
     end
 
-    def pdf_metadata(pdf)
-      [
-       {
-        "label": "pages",
-        "value": pdf.page_count.blank? ? '' : pdf.page_count.first.to_s
-       },
+    def file_metadata(file)
+      md = [
        {
         "label": "title",
         "value": @presenter.title.first.to_s
        } 
       ]
+      if file.pdf?
+       md.push (
+         {
+          "label": "pages",
+          "value": file.page_count.blank? ? '' : file.page_count.first.to_s
+         }
+       )
+      end
+      if file.audio? || file.video?
+       md.push (
+         {
+          "label": "length",
+          "value": file.duration[0]
+         }
+       )
+      end
+      md
     end
 
   end
