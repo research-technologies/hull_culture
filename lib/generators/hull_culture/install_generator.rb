@@ -33,6 +33,9 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
     # browse_everything - install
     generate 'browse_everything:install', '-f'
 
+    # Riiif - install
+    generate 'hyrax:riiif', '-f'
+
     # models - this inserts into config/initializers/hyrax.rb
     generate ' dog_biscuits:generate_all', '-f'
 
