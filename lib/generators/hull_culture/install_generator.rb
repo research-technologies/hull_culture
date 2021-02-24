@@ -33,9 +33,6 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
     # browse_everything - install
     generate 'browse_everything:install', '-f'
 
-    # Riiif - install
-    generate 'hyrax:riiif', '-f'
-
     # models - this inserts into config/initializers/hyrax.rb
     generate ' dog_biscuits:generate_all', '-f'
 
@@ -44,6 +41,10 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
 
     # This comes after the work generators because it inserts into the locales
     generate 'hull_culture:locales_labels', '-f'
+
+    # Riiif - install
+    generate 'hyrax:riiif', '-f'
+
   end
   
   # Replace the catalog controller, we have too much customisation to use the 
