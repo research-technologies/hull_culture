@@ -36,14 +36,14 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
     # models - this inserts into config/initializers/hyrax.rb
     generate ' dog_biscuits:generate_all', '-f'
 
+    # Riiif - install
+    generate 'hyrax:riiif', '-f'
+
     # This comes after the work generators because it inserts into the model
     generate 'hull_culture:customisations', '-f'
 
     # This comes after the work generators because it inserts into the locales
     generate 'hull_culture:locales_labels', '-f'
-
-    # Riiif - install
-    generate 'hyrax:riiif', '-f'
 
   end
   

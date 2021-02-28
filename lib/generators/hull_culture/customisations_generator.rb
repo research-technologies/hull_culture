@@ -69,4 +69,16 @@ This generator adds specific properties.
       vis_routes
     end
   end
+
+  def fix_riiif
+    gsub_file 'config/initializers/riiif.rb', 'Riiif::HTTPFileResolver.new', 'Riiif::HttpFileResolver.new'
+    id_decode = %q(id = URI.decode(id)
+  )
+
+   # return if File.read('config/routes.rb').include?(vis_routes)
+    inject_into_file  'config/initializers/riiif.rb', before: 'fs_id = id.sub(/\A([^\/]*)\/.*/, \'\1\')' do
+      id_decode
+    end
+  end
+
 end
