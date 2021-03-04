@@ -81,4 +81,36 @@ This generator adds specific properties.
     end
   end
 
+  def add_manifest_routes
+    end_of_routes="  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html"
+
+    manifest_routes=%q(  # Route for non-image (PDF) files in Universal Viewer manifests
+  get '/manifest_file/:id', to: 'hyrax/file_sets#manifest_file'
+  # Route for format specific manifests
+  get '/manifest_mm/:id(/:manifest_type)', to: 'hyrax/digital_archival_objects#manifest_mm'
+
+)
+    inject_into_file 'config/routes.rb', before: end_of_routes do
+      manifest_routes
+    end
+
+    # Inject a controller for type based manifest (aka manifest_mm)
+    manifest_mm=%q(
+    def manifest_mm
+
+      headers['Access-Control-Allow-Origin'] = '*'
+
+      json = iiif_manifest_builder.manifest_for(presenter: iiif_manifest_presenter, manifest_type: params[:manifest_type])
+
+      respond_to do |wants|
+        wants.json { render json: json }
+        wants.html { render json: json }
+      end
+    end
+)
+    inject_into_file 'app/controllers/hyrax/digital_archival_objects_controller.rb', after: "self.show_presenter = Hyrax::DigitalArchivalObjectPresenter\n" do
+      manifest_mm
+    end
+  end
+
 end

@@ -3,10 +3,14 @@ module Hyrax
   module PrependManifestBuilderService
     attr_accessor :presenter, :request
 
-    # Override Hyrax 2.9.3 - append media sequences for PDF 
+    # Override Hyrax 2.9.3 - append media sequences for Multi Media manifest 
+    # type can be blank for all qualifying formats or one of audio, video, pdf
     #
-    def manifest_for(presenter:)
+    def manifest_for(presenter:, manifest_type: '')
+      @manifest_type = manifest_type
       @presenter = presenter
+      # Do we do this at all if we have requested a "normal" manifest (i.e. manifest_type=image)
+      # Or do we get a bit more filtery at the next stage (e.g. if there are any images avoid mediaSequences?)
       add_media_sequences_for_pdf(sanitized_manifest(presenter: presenter))
     end
 
@@ -22,16 +26,33 @@ module Hyrax
     # They (along with this prepend) will all be defunct once Hyrax switch to using IIIF 3.0 
     # https://iiif.io/api/presentation/3.0/#32-technical-properties
     #
+    # Amended to respond to traditional request to concern/[model]/:id/manifest, but also 
+    # manifest_mm/:id/:manifest_type (allowing us to request a manifest of a given format (e.g. audio)
+    #
     def add_media_sequences_for_pdf(manifest)
-      files = @presenter.file_set_presenters.select{ |f| f.pdf? || f.audio? || f.video? }
-      if files.present?
+      # If we have mixed media that includes images it might be prudent to 
+      # present a trad. image manifest without mediaSequence
+      images = @presenter.file_set_presenters.select{ |f| f.image? }
+
+      if @manifest_type.blank?
+        # No manifest type requested, gather all the qualifying files (apart from images)
+        other_files = @presenter.file_set_presenters.select{ |f| f.pdf? || f.audio? || f.video? }
+      else
+        # Gather the files that have been requested #TODO error catching for non-qualifying file types
+        other_files = @presenter.file_set_presenters.select{ |f| f.send "#{@manifest_type}?" }
+      end
+      #If we are not asking for images or there are no images present but we do have qualifying files we add mediaSequnce 
+      if (other_files.present? and not images.present? and @manifest_type != 'image')
         manifest['@context'] = [manifest['@context'], 'https://wellcomelibrary.org/ld/ixif/0/context.json']
-        manifest['mediaSequences'] = [media_sequences(files, manifest['sequences'])]
-        manifest['sequences'] ||= []
+        manifest['mediaSequences'] = [media_sequences(other_files, manifest['sequences'])]
+        # If we are adding media sequences there's not much point in keeping the old sequnces as far as I can see
+        # If we do wan them switch the following two lines
+        #manifest['sequences'] ||= []
+        manifest['sequences'] = []
         manifest['sequences'] += [add_placeholder_sequence]
       end
       manifest
-    end
+    end 
 
     def media_type(file)
        mt = "unknown:Thing"
@@ -53,19 +74,22 @@ module Hyrax
           file_rendering(f)
         )
       end
-      # add sequences
-      unless sequences.blank?
-        sequences.first['canvases'].each do |canvas|
-          elements << media_sequence(
-            canvas['images'].first['resource']['@id'],
-            image_thumb(canvas['images'].first['resource']['@id']),
-            canvas['label'],
-            [{ 'height': canvas['width'], 'width': canvas['width'] }],
-            '',
-            canvas['images'].first['resource']['@type']
-          )
-        end
-      end
+      # add sequences (i.e. images to the media sequence)
+      # Do we want to do this? It makes for a not-as-good user ex for images I think
+      # In this case (Hull Culture) we present via aother blacklight so no
+#      unless sequences.blank?
+#        sequences.first['canvases'].each do |canvas|
+#          elements << media_sequence(
+#            canvas['images'].first['resource']['@id'],
+#            image_thumb(canvas['images'].first['resource']['@id']),
+#            canvas['label'],
+#            [{ 'height': canvas['width'], 'width': canvas['width'] }],
+#            '',
+#            canvas['images'].first['resource']['@type'],
+#            '',
+#          )
+#        end
+#      end
       {
         "@id": hyrax_url("/iiif/#{@presenter.id}/xsequence/s0"),
         "@type": "ixif:MediaSequence",
