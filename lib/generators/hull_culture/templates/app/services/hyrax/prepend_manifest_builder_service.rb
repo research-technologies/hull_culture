@@ -41,8 +41,9 @@ module Hyrax
         # Gather the files that have been requested #TODO error catching for non-qualifying file types
         other_files = @presenter.file_set_presenters.select{ |f| f.send "#{@manifest_type}?" }
       end
-      #If we are not asking for images or there are no images present but we do have qualifying files we add mediaSequnce 
-      if (other_files.present? and not images.present? and @manifest_type != 'image')
+      # If we are not asking for images or anything or there are no images present but 
+      # we do have qualifying files we add mediaSequnce 
+      if other_files.present? && ['video','audio','pdf'].include?(@manifest_type)
         manifest['@context'] = [manifest['@context'], 'https://wellcomelibrary.org/ld/ixif/0/context.json']
         manifest['mediaSequences'] = [media_sequences(other_files, manifest['sequences'])]
         # If we are adding media sequences there's not much point in keeping the old sequnces as far as I can see
