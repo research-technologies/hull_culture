@@ -16,23 +16,23 @@ This generator adds specific properties.
   # add custom fields
   def update_custom_properties
     # properties
-    properties = [] # matches name of concern so camelized
+    properties = %w[Accuracy VesselName VesselType] # matches name of concern so camelized
 
-    models = %w[] # matches file_name so underscore
+    models = %w[photograph] # matches file_name so underscore
     models.each do |m|
       file_text = File.read("app/models/#{m}.rb")
       properties.each do |p|
         next if file_text.include? p
         inject_into_file "app/models/#{m}.rb", after: 'WorkBehavior' do
-          "\n  include #{p}"
+          "\n  include DogBiscuits::#{p}"
         end
       end
     end
 
     # solr_doc
     properties.each do |p|
-      solr_doc = "\n  attribute :#{p.downcase}, Solr::Array, solr_name('#{p.downcase}')\n"
-      next if File.read('app/models/solr_document.rb').include? p.downcase
+      solr_doc = "\n  attribute :#{p.underscore.downcase}, Solr::Array, solr_name('#{p.underscore.downcase}')\n"
+      next if File.read('app/models/solr_document.rb').include? p.underscore.downcase
       inject_into_file 'app/models/solr_document.rb', before: "\nend\n" do
         solr_doc
       end
