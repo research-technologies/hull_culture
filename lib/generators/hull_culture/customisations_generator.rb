@@ -87,16 +87,18 @@ This generator adds specific properties.
     manifest_routes=%q(  # Route for non-image (PDF) files in Universal Viewer manifests
   get '/manifest_file/:id', to: 'hyrax/file_sets#manifest_file'
   # Route for format specific manifests
-  get '/manifest_mm/:id(/:manifest_type)', to: 'hyrax/digital_archival_objects#manifest_mm'
+  get '/concern/digital_archival_objects/:id/manifest/(/:manifest_type)', to: 'hyrax/digital_archival_objects#manifest'
 
 )
     inject_into_file 'config/routes.rb', before: end_of_routes do
       manifest_routes
     end
 
-    # Inject a controller for type based manifest (aka manifest_mm)
-    manifest_mm=%q(
-    def manifest_mm
+    # Inject a controller ot override the manifest and allow for type based manifests
+    manifest_override=%q(
+    # Override Hyrax 2.9.3 manifest in WorksControllerBehavior
+    # /concern/digital_archival_objects/:id(/:manifest_type)
+    def manifest
 
       headers['Access-Control-Allow-Origin'] = '*'
 
@@ -109,7 +111,7 @@ This generator adds specific properties.
     end
 )
     inject_into_file 'app/controllers/hyrax/digital_archival_objects_controller.rb', after: "self.show_presenter = Hyrax::DigitalArchivalObjectPresenter\n" do
-      manifest_mm
+      manifest_override
     end
   end
 
