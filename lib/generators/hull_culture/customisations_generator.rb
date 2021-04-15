@@ -16,7 +16,7 @@ This generator adds specific properties.
   # add custom fields
   def update_custom_properties
     # properties
-    properties = %w[Accuracy VesselName VesselType] # matches name of concern so camelized
+    properties = %w[Accuracy VesselName VesselType PhotoSize PhotoPerson] # matches name of concern so camelized
 
     models = %w[photograph] # matches file_name so underscore
     models.each do |m|
@@ -28,6 +28,9 @@ This generator adds specific properties.
         end
       end
     end
+
+    #Add lat long which needs to be indexed but is part of the Geo concern so not required to be processed above
+    properties = %w[Accuracy VesselName VesselType PhotoSize PhotoPerson LatLong]
 
     # solr_doc
     properties.each do |p|
@@ -115,4 +118,12 @@ This generator adds specific properties.
     end
   end
 
+  # Use custom version of atribute rows that will check [model]_nolist_properties config item
+  def recreate_attribute_rows
+    models = %w[photograph] # matches file_name so underscore
+    models.each do |m|
+      attributes_file = "app/views/hyrax/#{m.pluralize}/_attribute_rows.html.erb"
+      copy_file '_attribute_rows.html.erb', attributes_file
+    end
+  end
 end

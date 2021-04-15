@@ -55,31 +55,55 @@ DogBiscuits.config do |config|
     package_ids
   ]
   config.package_properties_required = %i[title identifier]
+=begin
+          identifier
+          title
+          abstract #description
+          photo_person (as in the person in the photo)
+          vessel_name
+          vessel_type
+          date_created
+          location
+          lat_long #combined version to avoid lat/long mix up
+          accuracy #arbitrary measure of accuracy of the geo data
+          source
+          former_identifier # Original Reference
+          part_of #Publication
+          note #Additional information
+          related_url #geonames reference
+          photo_size
+          rights_statement
+          license
+=end
 
   config.photograph_properties = %i[
-    title
-    abstract
-    vessel_name
-    vessel_type
-    creator
-    date
-    location
-    lat
-    long
-    accuracy
-    source
-    former_identifier
-    part_of
-    related_url
-    extent
-    rights_statement
+          title
+          abstract
+          identifier
+          photo_person
+          vessel_name
+          vessel_type
+          date_created
+          location
+          lat_long
+          accuracy
+          source
+          former_identifier
+          part_of
+          note
+          related_url
+          photo_size
+          rights_statement
+          license
   ]
   config.photograph_properties_required = %i[
     title
-    creator
-    date
   ]
   
+  config.photograph_nolist_properties = %i[
+    title description identifier license
+  ]
+
   # can we add the other props here?
   config.facet_properties = %i[packaged_by_titles identifier part_of extent date_uploaded]
   config.index_properties = %i[title date_uploaded packaged_by_titles identifier part_of extent]
@@ -88,8 +112,9 @@ DogBiscuits.config do |config|
   # config.singular_properties = %i[]
   # config.facet_only_properties = %i[]
 
-  config.property_mappings[:identifier][:label] = 'Accession Number'
-  config.property_mappings[:part_of][:label] = 'Collection'
+  config.property_mappings[:identifier][:label] = 'Accession Number / Identifier'
+  config.property_mappings[:part_of][:label] = 'Collection / Publication'
+#  config.property_mappings[:part_of][:label] = 'Publication' #todo split label for Photograph / DAO => Collection / Publication
 
   config.property_mappings[:vessel_name] = { label: 'Name of Vessel',
     help_text: 'The name of the vessel pictured',
@@ -105,5 +130,25 @@ DogBiscuits.config do |config|
     help_text: 'A measure of accuracy of the geographic data associated with this item',
     index: [{ link_to_search: false }]
   }
+
+  config.property_mappings[:photo_size] = { label: 'Size of photograph',
+    help_text: 'The dimensions of the original photograph'
+  }
+
+  config.property_mappings[:photo_person] = { label: 'People in Photograph',
+    help_text: 'People or person featured in photograph'
+  }
+
+  config.property_mappings[:lat_long] = { label: 'Latitude / Longitude'}
+  config.property_mappings[:date_created] = { label: 'Date'}
+
+  config.property_mappings[:abstract][:label] = 'Description'
+  config.property_mappings[:former_identifier][:label] = 'Original Reference'
+  config.property_mappings[:related_url] = { label: 'Streetview URL', help_text: 'A streetview URL representing a current view of the scene photographed', render_as: 'streetview_url' }
+  config.property_mappings[:note][:label] = 'Additional Information'
+
+
+
+
 
 end

@@ -45,6 +45,11 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
     # This comes after the work generators because it inserts into the locales
     generate 'hull_culture:locales_labels', '-f'
 
+    # install browse_everything
+    generate 'browse_everything:install', '-f'
+
+    # dog_biscuits dates - run after everything
+    generate 'dog_biscuits:dates', "-f"
   end
   
   # Replace the catalog controller, we have too much customisation to use the 

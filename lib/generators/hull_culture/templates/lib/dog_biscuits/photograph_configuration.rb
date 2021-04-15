@@ -5,20 +5,23 @@ module DogBiscuits
         properties = %i[
           title
           abstract
+          identifier
+          photo_person
           vessel_name
           vessel_type
-          creator
-          date
+          date_created
           location
-          lat
-          long
+          lat_long
+          place
           accuracy
           source
           former_identifier
           part_of
+          note
           realted_url
-          extent
-          rights
+          photo_size
+          rights_statement
+          license
         ]
         properties = base_properties + properties + common_properties
         properties.sort!
@@ -28,6 +31,11 @@ module DogBiscuits
     attr_writer :photograph_properties_required
     def photograph_properties_required
       @photograph_properties_required ||= required_properties
+    end
+
+    attr_writer :photograph_nolist_properties
+    def photograph_nolist_properties
+      @photograph_nolist_properties ||= []
     end
 
   end
