@@ -1,5 +1,4 @@
-
-zen_string_literal: true
+#forzen_string_literal: true
 
 class StreetviewUrlRenderer < Hyrax::Renderers::AttributeRenderer
   def attribute_value_to_html(value)
