@@ -5,6 +5,7 @@ module DogBiscuits
         properties = %i[
           title
           abstract
+          description
           identifier
           photo_person
           vessel_name
@@ -12,15 +13,16 @@ module DogBiscuits
           date_created
           location
           lat_long
-          place
           accuracy
+          related_url
+          geoname_id
           source
           former_identifier
           part_of
           note
-          realted_url
           photo_size
           rights_statement
+          rights_holder
           license
         ]
         properties = base_properties + properties + common_properties

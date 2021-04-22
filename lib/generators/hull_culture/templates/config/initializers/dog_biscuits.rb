@@ -73,12 +73,14 @@ DogBiscuits.config do |config|
           related_url #geonames reference
           photo_size
           rights_statement
+          rights_holder
+          rights_description # not used # also requires inclusion in customization generator
           license
 =end
 
   config.photograph_properties = %i[
           title
-          abstract
+          description
           identifier
           photo_person
           vessel_name
@@ -87,13 +89,15 @@ DogBiscuits.config do |config|
           location
           lat_long
           accuracy
+          related_url
+          geoname_id
           source
           former_identifier
           part_of
           note
-          related_url
           photo_size
           rights_statement
+          rights_holder
           license
   ]
   config.photograph_properties_required = %i[
@@ -101,7 +105,7 @@ DogBiscuits.config do |config|
   ]
   
   config.photograph_nolist_properties = %i[
-    title description identifier license
+    title description identifier license note
   ]
 
   # can we add the other props here?
@@ -109,7 +113,7 @@ DogBiscuits.config do |config|
   config.index_properties = %i[title date_uploaded packaged_by_titles identifier part_of extent]
 
   # config.authorities_add_new = %i[]
-  # config.singular_properties = %i[]
+  config.singular_properties = %i[ rights_statement license ]
   # config.facet_only_properties = %i[]
 
   config.property_mappings[:identifier][:label] = 'Accession Number / Identifier'
@@ -139,16 +143,12 @@ DogBiscuits.config do |config|
     help_text: 'People or person featured in photograph'
   }
 
-  config.property_mappings[:lat_long] = { label: 'Latitude / Longitude'}
   config.property_mappings[:date_created] = { label: 'Date'}
 
-  config.property_mappings[:abstract][:label] = 'Description'
   config.property_mappings[:former_identifier][:label] = 'Original Reference'
-  config.property_mappings[:related_url] = { label: 'Streetview URL', help_text: 'A streetview URL representing a current view of the scene photographed', render_as: 'streetview_url' }
+  config.property_mappings[:related_url] = { label: 'Modern day view', help_text: 'A streetview URL representing a current view of the scene photographed', render_as: 'streetview_url' }
+  config.property_mappings[:geoname_id] = { label: 'Geonames ID', help_text: 'The Numeric Geonames ID used to construct a valid geonames URL', render_as: 'geonames_url' }
+  config.property_mappings[:lat_long] = { label: 'Latitude / Longitude', render_as: 'google_maps_lat_long' }
   config.property_mappings[:note][:label] = 'Additional Information'
-
-
-
-
 
 end
