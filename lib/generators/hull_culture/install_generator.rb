@@ -57,7 +57,7 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
   def catalog_controller
     directory 'app/controllers/', 'app/controllers/'
   end
-  
+=begin 
   # Update catalog controller
   def catalog_controller_update
     
@@ -99,7 +99,7 @@ class HullCulture::InstallGenerator < Rails::Generators::Base
         end
       end
   end
-  
+=end  
   def indexers
   
     identifier = %(
