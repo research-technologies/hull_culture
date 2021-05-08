@@ -55,26 +55,33 @@ DogBiscuits.config do |config|
     package_ids
   ]
   config.package_properties_required = %i[title identifier]
+
 =begin
-          identifier
+
+######################################
+# Photograph model (bit specific) add for Basil Greenhill collection
+#
+# * Properties new to dog biscuits
+######################################
           title
-          abstract #description
-          photo_person (as in the person in the photo)
-          vessel_name
-          vessel_type
+          description
+          identifier
+*         photo_person (as in the person in the photo)
+*         vessel_name
+*         vessel_type
           date_created
           location
-          lat_long #combined version to avoid lat/long mix up
-          accuracy #arbitrary measure of accuracy of the geo data
+          geoname_id
+*         lat_long #combined version to avoid lat/long mix up
+*         accuracy #arbitrary measure of accuracy of the geo data
+          related_url #geonames reference
           source
           former_identifier # Original Reference
-          part_of #Publication
+          bibliographic_citation #(Publication, which is really a citation/reference from a publication)
           note #Additional information
-          related_url #geonames reference
-          photo_size
+*         photo_size
           rights_statement
           rights_holder
-          rights_description # not used # also requires inclusion in customization generator
           license
 =end
 
@@ -87,13 +94,13 @@ DogBiscuits.config do |config|
           vessel_type
           date_created
           location
+          geoname_id
           lat_long
           accuracy
           related_url
-          geoname_id
           source
           former_identifier
-          part_of
+          bibliographic_citation
           note
           photo_size
           rights_statement
@@ -101,19 +108,30 @@ DogBiscuits.config do |config|
           license
   ]
   config.photograph_properties_required = %i[
-    title
+    title 
   ]
   
   config.photograph_nolist_properties = %i[
-    title description identifier license note
+    title identifier license geoname_id
   ]
 
   # can we add the other props here?
-  config.facet_properties = %i[packaged_by_titles identifier part_of extent date_uploaded]
-  config.index_properties = %i[title date_uploaded packaged_by_titles identifier part_of extent]
+  config.facet_properties = %i[
+    packaged_by_titles 
+    identifier 
+    part_of 
+    extent 
+    date_uploaded 
+    vessel_name
+    vessel_type
+    photo_person
+    location
+  ]
+  #Index properties == properties that get shown on the result page (as opposed to those things twhat are indexed)
+  config.index_properties = %i[title vessel_type photo_person date_uploaded packaged_by_titles identifier part_of extent]
 
   # config.authorities_add_new = %i[]
-  config.singular_properties = %i[ rights_statement license ]
+  config.singular_properties = %i[ rights_statement ]
   # config.facet_only_properties = %i[]
 
   config.property_mappings[:identifier][:label] = 'Accession Number / Identifier'
@@ -147,8 +165,13 @@ DogBiscuits.config do |config|
 
   config.property_mappings[:former_identifier][:label] = 'Original Reference'
   config.property_mappings[:related_url] = { label: 'Modern day view', help_text: 'A streetview URL representing a current view of the scene photographed', render_as: 'streetview_url' }
-  config.property_mappings[:geoname_id] = { label: 'Geonames ID', help_text: 'The Numeric Geonames ID used to construct a valid geonames URL', render_as: 'geonames_url' }
+  config.property_mappings[:geoname_id] = { label: 'Geonames ID', help_text: 'The Numeric Geonames ID (e.g. 12345) used to construct a valid geonames URL'}
+  config.property_mappings[:location] = { label: 'Location', render_as: 'geonames_url'}
   config.property_mappings[:lat_long] = { label: 'Latitude / Longitude', render_as: 'google_maps_lat_long' }
-  config.property_mappings[:note][:label] = 'Additional Information'
+  config.property_mappings[:note] = {label: 'Additional Information', render_as: 'simple_format' }
+  config.property_mappings[:description] = { label: 'Description', render_as: 'simple_format' }
+  config.property_mappings[:bibliographic_citation] = { label: 'Bibliographic Citation' }
+
+
 
 end

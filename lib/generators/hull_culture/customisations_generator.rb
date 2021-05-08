@@ -30,7 +30,7 @@ This generator adds specific properties.
     end
 
     #Add lat long which needs to be indexed but is part of the Geo concern so not required to be processed above
-    properties = %w[Accuracy VesselName VesselType PhotoSize PhotoPerson LatLong RightsHolder GeonameId]
+    properties = %w[Accuracy VesselName VesselType PhotoSize PhotoPerson LatLong RightsHolder GeonameId BibliographicCitation]
 
     # solr_doc
     properties.each do |p|

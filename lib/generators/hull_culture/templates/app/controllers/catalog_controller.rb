@@ -2,6 +2,7 @@
 class CatalogController < ApplicationController
   include Hydra::Catalog
   include Hydra::Controller::ControllerBehavior
+  include DogBiscuits::Blacklight::Commands
 
   # This filter applies the hydra access controls
   before_action :enforce_show_permissions, only: :show
@@ -46,25 +47,20 @@ class CatalogController < ApplicationController
     config.index.display_type_field = solr_name("has_model", :symbol)
     config.index.thumbnail_field = 'thumbnail_path_ss'
 
-    # replace facets start
-    config.add_facet_field solr_name("human_readable_type", :facetable), label: "Type", limit: 5
-    config.add_facet_field solr_name('packaged_by_titles', :facetable), limit: 5, label: 'In package'
-    config.add_facet_field solr_name('identifier', :facetable), limit: 5, label: 'Accession Number'
-    config.add_facet_field solr_name('part_of', :facetable), limit: 5, label: 'Collection'
-    config.add_facet_field solr_name('extent', :facetable), limit: 5, label: 'Extent'
-    config.add_facet_field solr_name('date_uploaded', :facetable), limit: 5
-    # replace facets end
-
-    config.add_facet_field solr_name("mime_type", :facetable), limit: 5, label: 'Mime type (DIP)'
+    # This lot below are from original config, but we have switched to dog_biscuits 
+    # managed config for other fields. Check config/initializers/dog_biscuits.rb for 
+    # details. I'll leave these ones in 'ere for now
     config.add_facet_field solr_name("format_label", :facetable), limit: 5, label: 'Format (DIP)'
-    
     config.add_facet_field solr_name("aip_format_label", :facetable), limit: 5, label: 'Format (AIP)'
     config.add_facet_field solr_name("aip_format_registry_key", :facetable), limit: 5, label: 'Pronom key (AIP)'
-    
     config.add_facet_field solr_name("sip_format_label", :facetable), limit: 5, label: 'Format (SIP)'
     config.add_facet_field solr_name("sip_format_registry_key", :facetable), limit: 5, label: 'Pronom key (SIP)'
-    
     config.add_facet_field solr_name('member_of_collections', :symbol), limit: 5, label: 'Collections'
+
+    # solr fields that will be treated as facets by the blacklight application
+    #   The ordering of the field names is the order of the display
+    facet_props = DogBiscuits.config.facet_properties
+    add_facet_field config, facet_props
 
     # The generic_type isn't displayed on the facet list
     # It's used to give a label to the filter that comes from the user profile
@@ -74,27 +70,15 @@ class CatalogController < ApplicationController
     # previously. Simply remove these lines if you'd rather use Solr request
     # handler defaults, or have no facets.
     config.add_facet_fields_to_solr_request!
-
-    # insert indexes start
-    config.add_index_field solr_name('title', :stored_searchable), if: false, itemprop:  'name', label:  'Title'
-    config.add_index_field solr_name('date_uploaded', :stored_searchable), helper_method:  'human_readable_date'
-    config.add_index_field solr_name('identifier', :stored_searchable), field_name: 'identifier', itemprop:  'identifier', label:  'Accession Number', helper_method:  'index_field_link'
-    config.add_index_field solr_name('part_of', :stored_searchable), itemprop:  'isPartOf', label:  'Collection'
-    config.add_index_field solr_name('extent', :stored_searchable), label:  'Extent'
-    # insert indexes end
-    
-    config.add_index_field solr_name("format_label", :stored_searchable), label: 'Format (DIP)'
-    config.add_index_field solr_name("aip_format_label", :stored_searchable), label: 'Format (AIP)'
-    config.add_index_field solr_name("sip_format_label", :stored_searchable), label: 'Format (SIP)'
-
-    # solr fields to be displayed in the show (single result) view
-    #   The ordering of the field names is the order of the display
+     
+    # This lot below are from original config, but we have switched to dog_biscuits 
+    # managed config for other fields. Check config/initializers/dog_biscuits.rb for 
+    # details. I'll leave these ones in 'ere for now
     config.add_show_field solr_name("bit_depth", :stored_searchable)
     config.add_show_field solr_name("character_set", :stored_searchable)
     config.add_show_field solr_name("color_map", :stored_searchable)
     config.add_show_field solr_name("color_space", :stored_searchable)
     config.add_show_field solr_name("data_format", :stored_searchable)
-    config.add_show_field solr_name("date_created", :stored_searchable)
     config.add_show_field solr_name("format_label", :stored_searchable)
     config.add_show_field solr_name("gps_timestamp", :stored_searchable)
     config.add_show_field solr_name("image_producer", :stored_searchable)
@@ -104,18 +88,18 @@ class CatalogController < ApplicationController
     config.add_show_field solr_name("markup_basis", :stored_searchable)
     config.add_show_field solr_name("markup_language", :stored_searchable)
     config.add_show_field solr_name("mime_type", :stored_searchable)
-    config.add_show_field solr_name("aip_format_label", :stored_searchable)
-    config.add_show_field solr_name("aip_format_version", :stored_searchable)
-    config.add_show_field solr_name("aip_format_registry_key", :stored_searchable)
-    config.add_show_field solr_name("aip_format_registry_name", :stored_searchable)
-    config.add_show_field solr_name("aip_original_checksum_algorithm", :stored_searchable)
-    config.add_show_field solr_name("aip_original_checksum_originator", :stored_searchable)
-    config.add_show_field solr_name("aip_normalization_date", :stored_searchable)
-    config.add_show_field solr_name("aip_normalization_detail", :stored_searchable)
-    config.add_show_field solr_name("sip_format_label", :stored_searchable)
-    config.add_show_field solr_name("sip_format_version", :stored_searchable)
-    config.add_show_field solr_name("sip_format_registry_key", :stored_searchable)
-    config.add_show_field solr_name("sip_format_registry_name", :stored_searchable)
+
+    # solr fields to be displayed in the index (search results) view
+    #   The ordering of the field names is the order of the display 
+    index_props = DogBiscuits.config.index_properties.collect do |prop|
+      { prop => index_options(prop, DogBiscuits.config.property_mappings[prop]) }
+    end
+    add_index_field config, index_props
+
+    # solr fields to be displayed in the show (single result) view
+    #   The ordering of the field names is the order of the display
+    show_props = DogBiscuits.config.all_properties
+    add_show_field config, show_props
 
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
@@ -147,133 +131,9 @@ class CatalogController < ApplicationController
     # case for a BL "search field", which is really a dismax aggregate
     # of Solr search fields.
 
-      config.add_search_field('file_format') do |field|
-        solr_name = solr_name('file_format', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('mime_type') do |field|
-        solr_name = solr_name('mime_type', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('aip_format_label') do |field|
-        solr_name = solr_name('aip_format_label', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('aip_format_version') do |field|
-        solr_name = solr_name('aip_format_version', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('aip_format_registry_key') do |field|
-        solr_name = solr_name('aip_format_registry_key', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('aip_normalization_date') do |field|
-        solr_name = solr_name('aip_normalization_date', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('aip_normalization_detail') do |field|
-        solr_name = solr_name('aip_normalization_detail', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('sip_format_label') do |field|
-        solr_name = solr_name('sip_format_label', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('sip_format_version') do |field|
-        solr_name = solr_name('sip_format_version', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('sip_format_registry_key') do |field|
-        solr_name = solr_name('sip_format_registry_key', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('part_of') do |field|
-        solr_name = solr_name('part_of', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('identifier') do |field|
-        solr_name = solr_name('identifier', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('title') do |field|
-        solr_name = solr_name('title', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('creator') do |field|
-        solr_name = solr_name('creator', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('depositor') do |field|
-        solr_name = solr_name('depositor', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
-
-      config.add_search_field('date_uploaded') do |field|
-        solr_name = solr_name('date_uploaded', :stored_searchable)
-        field.solr_local_parameters = {
-          qf: solr_name,
-          pf: solr_name
-        }
-      end
+     add_search_field config,DogBiscuits.config.all_properties.reject { |v|
+      DogBiscuits.config.exclude_from_search_properties.include?(v)
+    }
 
     # "sort results by" select (pulldown)
     # label in pulldown is followed by the name of the SOLR field to sort by and

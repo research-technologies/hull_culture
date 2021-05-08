@@ -6,7 +6,7 @@ module DogBiscuits
 
     included do
       property :vessel_name, predicate: ::RDF::Vocab::SCHEMA.callSign do |index|
-        index.as :stored_searchable
+        index.as :stored_searchable, :facetable
       end
     end
   end

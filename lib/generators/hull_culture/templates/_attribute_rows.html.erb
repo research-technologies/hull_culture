@@ -18,7 +18,8 @@
   <%= presenter.attribute_to_html(prop, 
     label: I18n.t("dog_biscuits.fields.#{prop.to_s}"),
     render_as: render, 
-    html_dl: true) 
+    html_dl: true,
+    geoname_id: presenter.geoname_id) 
   %>
 <% end %>
 

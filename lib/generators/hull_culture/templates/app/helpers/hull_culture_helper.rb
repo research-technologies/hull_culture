@@ -4,7 +4,8 @@ module HullCultureHelper
   # @param dm_pair [String] eg 50 41'55" N, 3 5'27" W
   # @return lat long decimals
   def latlong(dms_pair)
-    match = dms_pair.match(/(\d+) (\d+)'(\d+)" ([NS]), (\d+) (\d+)'(\d+)" ([EW])/)
+
+    match = dms_pair.match(/(\d+) (\d+)'((?:\d*\.)?\d+)" ([NS]), (\d+) (\d+)'((?:\d*\.)?\d+)" ([EW])/)
 
 #    lat = dms_to_degrees(*match[1..4].map {|x| x.to_f})
 #    long = dms_to_degrees(*match[5..8].map {|x| x.to_f})

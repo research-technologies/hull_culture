@@ -6,7 +6,7 @@ module DogBiscuits
 
     included do
       property :photo_person, predicate: ::RDF::Vocab::SCHEMA.about do |index|
-        index.as :stored_searchable
+        index.as :stored_searchable, :facetable
       end
     end
   end

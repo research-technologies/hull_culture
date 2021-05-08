@@ -7,7 +7,7 @@ module DogBiscuits
     included do
       property :vessel_type,
                predicate: ::RDF::URI.new('http://rdf.muninn-project.org/ontologies/naval#hasShipClass') do |index|
-        index.as :stored_searchable
+        index.as :stored_searchable, :facetable
       end
     end
   end
