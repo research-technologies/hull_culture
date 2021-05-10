@@ -50,6 +50,8 @@ class CatalogController < ApplicationController
     # This lot below are from original config, but we have switched to dog_biscuits 
     # managed config for other fields. Check config/initializers/dog_biscuits.rb for 
     # details. I'll leave these ones in 'ere for now
+    config.add_facet_field solr_name("human_readable_type", :facetable), label: "Type", limit: 5
+    config.add_facet_field solr_name("mime_type", :facetable), limit: 5, label: 'Mime type (DIP)'
     config.add_facet_field solr_name("format_label", :facetable), limit: 5, label: 'Format (DIP)'
     config.add_facet_field solr_name("aip_format_label", :facetable), limit: 5, label: 'Format (AIP)'
     config.add_facet_field solr_name("aip_format_registry_key", :facetable), limit: 5, label: 'Pronom key (AIP)'
