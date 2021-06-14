@@ -16,7 +16,7 @@ This generator adds specific properties.
   # add custom fields
   def update_custom_properties
     # properties
-    properties = %w[Accuracy VesselName VesselType PhotoSize PhotoPerson] # matches name of concern so camelized
+    properties = %w[Accuracy VesselName VesselType PhotoSize PhotoPerson Comment] # matches name of concern so camelized
 
     models = %w[photograph] # matches file_name so underscore
     models.each do |m|
@@ -30,7 +30,7 @@ This generator adds specific properties.
     end
 
     #Add lat long which needs to be indexed but is part of the Geo concern so not required to be processed above
-    properties = %w[Accuracy VesselName VesselType PhotoSize PhotoPerson LatLong RightsHolder GeonameId BibliographicCitation]
+    properties = %w[Accuracy VesselName VesselType PhotoSize PhotoPerson Comment LatLong RightsHolder GeonameId BibliographicCitation]
 
     # solr_doc
     properties.each do |p|

@@ -3,6 +3,7 @@
 require 'dog_biscuits/models/concerns/metadata_properties/scotland/accuracy'
 require 'dog_biscuits/models/concerns/metadata_properties/naval/vessel_type'
 require 'dog_biscuits/models/concerns/metadata_properties/schema/vessel_name'
+require 'dog_biscuits/models/concerns/metadata_properties/schema/comment'
 require 'dog_biscuits/models/concerns/metadata_properties/schema/photo_person'
 require 'dog_biscuits/models/concerns/metadata_properties/ulcc/photo_size'
 require 'dog_biscuits/models/concerns/metadata_properties/geonames/geoname_id'

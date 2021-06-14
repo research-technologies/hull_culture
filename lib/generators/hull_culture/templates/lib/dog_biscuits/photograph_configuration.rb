@@ -20,6 +20,7 @@ module DogBiscuits
           former_identifier
           part_of
           note
+          comment
           photo_size
           rights_statement
           rights_holder

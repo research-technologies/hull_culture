@@ -102,6 +102,7 @@ DogBiscuits.config do |config|
           former_identifier
           bibliographic_citation
           note
+          comment
           photo_size
           rights_statement
           rights_holder
@@ -159,6 +160,11 @@ DogBiscuits.config do |config|
 
   config.property_mappings[:photo_person] = { label: 'People in Photograph',
     help_text: 'People or person featured in photograph'
+  }
+
+  config.property_mappings[:comment] = { label: 'Comment',
+    help_text: 'Comment',
+    index: [{ link_to_search: true }]
   }
 
   config.property_mappings[:date_created] = { label: 'Date'}
