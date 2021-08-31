@@ -148,6 +148,11 @@ class CatalogController < ApplicationController
     config.add_sort_field "#{modified_field} desc", label: "date modified \u25BC"
     config.add_sort_field "#{modified_field} asc", label: "date modified \u25B2"
 
+# when we can index title as stored_sortable without having to hack core hyrax then we can turn this sorting on
+#    config.add_sort_field "title_ssi desc", label: "title \u25B2"
+#    config.add_sort_field "title_ssi asc", label: "title \u25BC"
+
+
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.
     config.spell_max = 5
