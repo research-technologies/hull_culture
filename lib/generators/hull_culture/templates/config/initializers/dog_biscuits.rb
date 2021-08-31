@@ -88,32 +88,32 @@ DogBiscuits.config do |config|
   config.photograph_properties = %i[
           title
           description
-          identifier
-          photo_person
           vessel_name
           vessel_type
+          photo_person
           date_created
           location
-          geoname_id
           lat_long
           accuracy
           related_url
+          note
           source
           former_identifier
           bibliographic_citation
-          note
-          comment
           photo_size
           rights_statement
           rights_holder
           license
+          identifier
+          geoname_id
+          comment
   ]
   config.photograph_properties_required = %i[
     title 
   ]
   
   config.photograph_nolist_properties = %i[
-    title identifier license geoname_id
+    title identifier license geoname_id comment
   ]
 
   # can we add the other props here?
@@ -129,22 +129,23 @@ DogBiscuits.config do |config|
     location
   ]
   #Index properties == properties that get shown on the result page (as opposed to those things twhat are indexed)
-  config.index_properties = %i[title vessel_type photo_person date_uploaded packaged_by_titles identifier part_of extent]
+  config.index_properties = %i[title vessel_type photo_person packaged_by_titles part_of extent]
 
   # config.authorities_add_new = %i[]
   config.singular_properties = %i[ rights_statement ]
   # config.facet_only_properties = %i[]
+  config.property_mappings[:license][:label] = 'Licence'
 
   config.property_mappings[:identifier][:label] = 'Accession Number / Identifier'
   config.property_mappings[:part_of][:label] = 'Collection / Publication'
 #  config.property_mappings[:part_of][:label] = 'Publication' #todo split label for Photograph / DAO => Collection / Publication
 
-  config.property_mappings[:vessel_name] = { label: 'Name of Vessel',
+  config.property_mappings[:vessel_name] = { label: 'Name of vessel',
     help_text: 'The name of the vessel pictured',
     index: [{ link_to_search: true }]
   }
 
-  config.property_mappings[:vessel_type] = { label: 'Type of Vessel',
+  config.property_mappings[:vessel_type] = { label: 'Type of vessel',
     help_text: 'The type of the vessel pictured',
     index: [{ link_to_search: true }]
   }
@@ -158,7 +159,7 @@ DogBiscuits.config do |config|
     help_text: 'The dimensions of the original photograph'
   }
 
-  config.property_mappings[:photo_person] = { label: 'People in Photograph',
+  config.property_mappings[:photo_person] = { label: 'People in photograph',
     help_text: 'People or person featured in photograph'
   }
 
@@ -169,14 +170,14 @@ DogBiscuits.config do |config|
 
   config.property_mappings[:date_created] = { label: 'Date'}
 
-  config.property_mappings[:former_identifier][:label] = 'Original Reference'
+  config.property_mappings[:former_identifier][:label] = 'Original reference'
   config.property_mappings[:related_url] = { label: 'Modern day view', help_text: 'A streetview URL representing a current view of the scene photographed', render_as: 'streetview_url' }
   config.property_mappings[:geoname_id] = { label: 'Geonames ID', help_text: 'The Numeric Geonames ID (e.g. 12345) used to construct a valid geonames URL'}
   config.property_mappings[:location] = { label: 'Location', render_as: 'geonames_url'}
   config.property_mappings[:lat_long] = { label: 'Latitude / Longitude', render_as: 'google_maps_lat_long' }
-  config.property_mappings[:note] = {label: 'Additional Information', render_as: 'simple_format' }
+  config.property_mappings[:note] = {label: 'Additional information', render_as: 'simple_format' }
   config.property_mappings[:description] = { label: 'Description', render_as: 'simple_format' }
-  config.property_mappings[:bibliographic_citation] = { label: 'Bibliographic Citation' }
+  config.property_mappings[:bibliographic_citation] = { label: 'Bibliographic citation' }
 
 
 
