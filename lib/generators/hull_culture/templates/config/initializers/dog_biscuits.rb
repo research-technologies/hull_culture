@@ -168,7 +168,7 @@ DogBiscuits.config do |config|
     index: [{ link_to_search: true }]
   }
 
-  config.property_mappings[:date_created] = { label: 'Date'}
+  config.property_mappings[:date_created] = { label: 'Date', render_as: 'iso_to_human'}
 
   config.property_mappings[:former_identifier][:label] = 'Original reference'
   config.property_mappings[:related_url] = { label: 'Modern day view', help_text: 'A streetview URL representing a current view of the scene photographed', render_as: 'streetview_url' }
