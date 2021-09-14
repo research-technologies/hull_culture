@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+def validate_hostname!(hostname)
+  return if hostname
+  usage
+  warn 'Please provide the hostname to import to.'
+  exit(1)
+end
+
+def validate_csv_file!(csv_file)
+  return if csv_file && File.exist?(csv_file)
+  usage
+  warn 'Please provide a metadata file to import.'
+  exit(1)
+end
+
+def validate_downloads_directory!(downloads_directory)
+  # TODO: check that this directory is empty
+  return if downloads_directory && Dir.exist?(downloads_directory)
+  warn 'Please provide an empty directory for downloading files into.'
+  exit(1)
+end
+
+def load_rails
+  warn 'Loading environment...'
+  require File.expand_path('../config/environment', __dir__)
+  require 'importer'
+  puts 'Starting import...'
+end
+
+def main(hostname, csv_file, downloads_directory)
+  validate_hostname!(hostname)
+  validate_csv_file!(csv_file)
+  validate_downloads_directory!(downloads_directory)
+  load_rails
+
+  # AccountElevator.switch!(hostname)
+  size = Importer::Csv::CsvImporter.new(csv_file, downloads_directory).import_all
+
+  warn size
+end
+
+def logger
+  Rails.logger
+end
+
+def usage
+  warn "Usage: #{$PROGRAM_NAME} <hostname> <csv file> <download_path>"
+end
+
+main(ARGV[0], ARGV[1], ARGV[2])
